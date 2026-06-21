@@ -11,5 +11,33 @@ class DFS(BaseSearch):
         self.depth_limit = depth_limit
 
     def search(self, initial: State) -> SearchResult:
-        # TODO: implemente a DFS aqui
-        raise NotImplementedError("Implemente o método search na classe DFS.")
+        frontier = [initial]
+        visited = {initial.tiles}
+        nodes_expanded = 0
+        nodes_generated = 1
+        max_frontier_size = 1
+
+        while frontier:
+            max_frontier_size = max(max_frontier_size, len(frontier))
+            state = frontier.pop()
+            nodes_expanded += 1
+
+            if state.is_goal:
+                return SearchResult(
+                    solution=state,
+                    nodes_expanded=nodes_expanded,
+                    nodes_generated=nodes_generated,
+                    max_frontier_size=max_frontier_size,
+                    depth=state.cost,
+                )
+
+            if state.cost >= self.depth_limit:
+                continue
+
+            for neighbor in state.neighbors():
+                if neighbor.tiles not in visited:
+                    visited.add(neighbor.tiles)
+                    nodes_generated += 1
+                    frontier.append(neighbor)
+
+        return SearchResult(solution=None, nodes_expanded=nodes_expanded, nodes_generated=nodes_generated, max_frontier_size=max_frontier_size)
